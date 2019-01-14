@@ -1,0 +1,18 @@
+{
+  "name": "experiment",
+  "version": "1.0.0",
+  "description": "practice for class",
+  "main": "index.js",
+  "scripts": {
+    "test": "none at this time"
+  },
+  "keywords": [
+    "npm",
+    "practice"
+  ],
+  "author": "katie duane",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}

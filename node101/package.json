@@ -1,0 +1,27 @@
+{
+  "name": "node101",
+  "version": "1.0.0",
+  "description": "This is a test package.json",
+  "main": "firstFile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/katiejduane/Unit3_Node.git"
+  },
+  "keywords": [
+    "node",
+    "js",
+    "npm"
+  ],
+  "author": "Katie Duane",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/katiejduane/Unit3_Node/issues"
+  },
+  "homepage": "https://github.com/katiejduane/Unit3_Node#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
