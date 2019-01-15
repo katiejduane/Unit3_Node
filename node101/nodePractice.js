@@ -77,3 +77,27 @@ function findName(element) {
 
 console.log(students.indexOf("Sean"))
 console.log(students.findIndex(findName));
+
+const x = 3;
+const y = 5;
+
+function squareIt(number, callback) {
+    // doStuff...
+    //  console.log(callback(x,y)**2);
+    let square = number ** 2;
+    return callback(square)
+}
+
+function triple(something) {
+    return something * 3;
+}
+
+function multiplyEm(a, b) {
+    return a * b;
+}
+
+let num = multiplyEm(3, 5);
+let result = squareIt(num, triple);
+console.log(result);
+
+// to RETURN something means
