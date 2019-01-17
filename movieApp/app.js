@@ -9,11 +9,13 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-// takes one parameter, a callback (middleware!)
-// sometimes we need NEXT as a paramter; if used, it is always last, and it passes the function on to whatever is NEXT
-// sometimes we DON'T want to use/call next, when we're done, and we're ready to send something back
+//write some middleware that gets the user's IP and saves it so the view can see it
+//we write application level middleware with app.use 
+//application level middle ware = a function req/res that runs every single request
 app.use((req, res, next)=>{
-  console.log('my middleware ran!')
+  const userIp = req.ip;
+  console.log(userIp)
+  res.locals.ip = userIp
   next();
 })
 

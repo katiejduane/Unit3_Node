@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+    <h1>Search for a movie</h1>
+    <!-- in form, action = where to submit the form (url), method =  what type of http request (get, post ,put, etc) -->
+    <form action="/search/movie" method="post">
+        <!-- on an input box, "name" attrubute is what the variable  will be called, on submission -->
+        <input type="text" name="movieTitle">
+        <input class="btn btn-primary" type="submit">
+    </form>
+    
+</body>
+</html>
