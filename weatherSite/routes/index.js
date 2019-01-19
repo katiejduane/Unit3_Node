@@ -13,6 +13,7 @@ router.get('/', function(req, res, next) {
 router.post('/weather', (req, res)=> {
   let zipCode = req.body.zipCode;
   let weatherUrl = `https://api.openweathermap.org/data/2.5/weather?zip=${zipCode}&units=imperial&appid=${apiKey}`
+  console.log(weatherUrl)
   request.get(weatherUrl, (error, response, body) => {
     const parsedData = JSON.parse(body);
     res.render('weather', {
@@ -20,5 +21,7 @@ router.post('/weather', (req, res)=> {
     })
   })
 });
+
+router.get('/')
 
 module.exports = router;
