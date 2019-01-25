@@ -1,11 +1,15 @@
 var express = require('express');
 var router = express.Router();
+const mysql = require('mysql');
+const config = require('../config');
+const connection = mysql.createConnection(config.db)
+connection.connect()
+
 
 //our node module for the key, in gitignore
-const apiKey = require('../config.js');
 const apiBaseUrl = 'http://api.themoviedb.org/3';
 const imageBaseUrl = 'http://image.tmdb.org/t/p/w300';
-const nowPlayingUrl = `${apiBaseUrl}/movie/now_playing?api_key=${apiKey}`;
+const nowPlayingUrl = `${apiBaseUrl}/movie/now_playing?api_key=${config.apiKey}`;
 const request = require('request');
 
 
@@ -35,7 +39,7 @@ router.post('/search/movie', (req, res, next)=> {
   //querystring data is in req.query
   //posted data is in req.body
   const movieTitle = req.body.movieTitle;
-  const searchUrl = `${apiBaseUrl}/search/movie?query=${movieTitle}&api_key=${apiKey}`
+  const searchUrl = `${apiBaseUrl}/search/movie?query=${movieTitle}&api_key=${config.apiKey}`
   request.get(searchUrl, (error, response, body)=>{
     const parsedData = JSON.parse(body);
     res.render('now_playing', {
@@ -44,5 +48,15 @@ router.post('/search/movie', (req, res, next)=> {
     })
   })
 });
+
+router.get('/login', (req, res, next) => {
+  res.render('login')
+})
+
+router.post('/loginProcess', (req, res, next) => {
+  const insertQuery = `INSERT into users (email,password)
+    VALUES
+  (?, ?)`
+})
 
 module.exports = router;
