@@ -29,9 +29,9 @@ document.addEventListener('click', function (event) {
 
 }, false);
 
-let circleColor = document.getElementById('circle').style.backgroundColor;
-document.addEventListener('click', function(event) {
 
+document.addEventListener('click', function(event) {
+    let circleColor = document.getElementById('circle').style.backgroundColor;
     if (event.target.matches('.light')) {
         circle.style.backgroundColor = chroma(circleColor).brighten(1);
     } else if (event.target.matches('.dark')) {
@@ -39,7 +39,7 @@ document.addEventListener('click', function(event) {
     }
 })
 
-document.addEventListener('click', function(event))
+// document.addEventListener('click', function(event))
 
 
 console.log("i'm heeeerrreeee!")

@@ -28,21 +28,21 @@ router.post('/addMood', (req, res, next) => {
   // res.json(req.body)
 })
 
-router.post('/addColor', (req, res, next) => {
-  const newMood = req.body.newMood;
-  const newDate = req.body.newDate;
-  const insertQuery = `INSERT INTO littleMermaid(color)
-    VALUES
-    (?);`
-  connection.query(insertQuery, [newColor], (err, results) => {
-    if (err) {
-      throw err;
-    } else {
-      console.log(insertQuery)
-      res.render('myAccount')
-    }
-  })
-  // res.json(req.body)
-})
+// router.post('/addColor', (req, res, next) => {
+//   const newMood = req.body.newMood;
+//   const newDate = req.body.newDate;
+//   const insertQuery = `INSERT INTO littleMermaid(color)
+//     VALUES
+//     (?);`
+//   connection.query(insertQuery, [newColor], (err, results) => {
+//     if (err) {
+//       throw err;
+//     } else {
+//       console.log(insertQuery)
+//       res.render('myAccount')
+//     }
+//   })
+//   // res.json(req.body)
+// })
 
 module.exports = router;
