@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><colorPractice></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="innerWrapper">
+          <h1>How are you feeling today?</h1>
+          <form class="form-inline" action="/addMood" method="post">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Peaceful" name="newMood" />
+              </div>
+              <div class="input-group">
+                <input type="date" class="form-control" name="newDate" />
+              </div>
+            </div>
+            <button type="submit" class="save">Save</button>
+          </form>
+        </div>
+      </div>
+    
+  </body>
+</html>
