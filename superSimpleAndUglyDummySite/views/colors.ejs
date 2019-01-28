@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 
 <head>
@@ -16,12 +16,12 @@
             </div>
         </div>
         <div class="row-2">
-            <div class="color" id="color1"></div>
-            <div class="color" id="color2"></div>
-            <div class="color" id="color3"></div>
-            <div class="color" id="color4"></div>
-            <div class="color" id="color5"></div>
-            <div class="color" id="color6"></div>
+            <div class="color" id="color1">Stressed</div>
+            <div class="color" id="color2">Energetic</div>
+            <div class="color" id="color3">Joyful</div>
+            <div class="color" id="color4">Free</div>
+            <div class="color" id="color5">Doubtful</div>
+            <div class="color" id="color6">Creative</div>
         </div>
         <div class="row-3">
             <div class="col-sm-6" id="colorPicker">
@@ -31,7 +31,7 @@
                 <button type="button" class="light">Lighten</button>
                 <button type="button" class="dark">Darken</button>
                 <form class="form-inline" action="/addColor" method="post" name="newColor">
-                    
+                    <input type="hidden" value="<%=littleMermaid.date%>" name="newDate" />
                     <button type="submit" class="save">Save</button>
                 </form>
             </div>
@@ -46,4 +46,23 @@
     <script src="/javascripts/scripts.js"></script>
 </body>
 
-</html>
+</html> -->
+
+
+<!-- <div class="container">
+    <div class="row">
+        <div class="innerWrapper">
+            <h1>How are you feeling today?</h1>
+            <form class="form-inline" action="/addMood" method="post">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Peaceful" name="newMood" />
+                    </div>
+                    <div class="input-group">
+                        <input type="date" class="form-control" name="newDate" />
+                    </div>
+                </div>
+                <button type="submit" class="save">Save</button>
+            </form>
+        </div>
+    </div> -->
