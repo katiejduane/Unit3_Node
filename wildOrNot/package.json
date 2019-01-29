@@ -1,0 +1,20 @@
+{
+  "name": "wildornot",
+  "version": "1.0.0",
+  "description": "Wild?",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wild"
+  ],
+  "author": "Katie D.",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "helmet": "^3.15.0",
+    "mysql": "^2.16.0"
+  }
+}
