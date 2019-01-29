@@ -24,12 +24,20 @@ router.post('/addMood', (req, res, next) => {
     if (err) {
       throw err;
     } else {
-      console.log("hello", insertQuery)
-      res.json(req.body)
-      // res.render('myAccount')
+
+      // res.json(req.body)
+      res.render('myAccount')
     }
   })
 })
+
+router.get('/myAccount', function (req, res, next) {
+  const selectQuery = 'SELECT * FROM littleMermaid;';
+  connection.query(selectQuery, (error, results) => {
+    console.log(selectQuery);
+    res.render('myAccount', {colorsArray: results })
+  })
+});
 
 
 module.exports = router;
