@@ -6,15 +6,30 @@ let app = express();
 // get bcrypt!
 const bcrypt = require('bcrypt-nodejs');
 
+// get sessions
+const expressSession = require('express-session');
+
 // Put pur safety helmet on
 const helmet = require('helmet');
 // app.use means use some middleware
 // middleware = any function that has access to req and res
 app.use(helmet());
 
+// get config file
+const config = require('./config');
+
+const sessionOptions = {
+    secret: config.sessionSecret,
+    resave: false,
+    saveUnitialized: true,
+    // cookie: {secure: true}
+};
+
+// using sessions
+app.use(expressSession(sessionOptions))
+
 // Set up mySQL connection
 const mysql = require('mysql');
-const config = require('./config');
 let connection = mysql.createConnection(config.db);
 // we have a connection, le'ts connect!
 connection.connect();
@@ -31,46 +46,82 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.get("/", (req, res, next) => {
-    // res.send("sanity check");
-    const animalQuery = "SELECT * FROM animals;";
-    connection.query(animalQuery, (error, results) => {
-        if (error) {
-            throw error
-        }
-        // see if there is anything in the query string for msg
-        let msg;
-        if (req.query.msg == 'regSuccess') {
-            msg = "You're all signed up for this great site!";
-            console.log(msg)
-        }
-
-        // results is an array of all rows in animals
-        // grab a random one
-        const rand = Math.floor(Math.random() * results.length);
-        res.render("index", { 
-            animal: results[rand],
-            msg 
-        });
-    })
+// Define some middleware if the user is logged in, then send the user data over to the view
+app.use('*', (req, res, next) => {
+    // console.log('Middleware is working');
+    if(req.session.loggedIn) {
+        // res.locals is the variable that gets sent to the view
+        res.locals.name = req.session.name
+        res.locals.email = req.session.name
+        res.locals.loggedIn = true;
+    } else {
+        res.locals.name = "";
+        res.locals.email = "";
+        res.locals.loggedIn = false;
+    }
+    next();
 })
+
+app.get("/", (req, res, next) => {
+    // check to see if the user is logged in! if not, goodbye!
+    if(!req.session.loggedIn) {
+        res.redirect('/login?msg=mustLogIn')
+    } else {
+        // res.send("sanity check");
+        // we want all rows in animals that don't have an id
+        // in the votes table (this is to stop the user from voting
+        // on the same photo more than once); we are working in two
+        // different tables! it's a perfect case for a SUB-QUERY!
+        // which is a query inside of a query!
+        // we're going to get a list of all the votes this user has
+        // and then check it against the list of animals
+        const animalQuery = `SELECT * FROM animals WHERE animals.id NOT IN (
+            SELECT aid FROM votes WHERE  uid = ?
+        );`;
+        connection.query(animalQuery, [req.session.uid],(error, results) => {
+            if (error) {
+                throw error
+            }
+            // see if there is anything in the query string for msg
+            let msg;
+            if (req.query.msg == 'regSuccess') {
+                msg = "You're all signed up for this great site!";
+                console.log(msg)
+            } else if (req.query.msg == 'loginSuccess'){
+                msg = "You're logged in."
+            }
+
+            // results is an array of all rows in animals
+            // grab a random one
+            if (results.length == 0) {
+                // user has voted on all the animals
+                res.render('index', {
+                    animal: null,
+                    msg: "You have voted on all the animals! Check out the standings."
+                })
+            } else {
+                const rand = Math.floor(Math.random() * results.length);
+                res.render("index", { 
+                    animal: results[rand],
+                    msg 
+                });
+            }
+       });
+    }
+});
 
 // add a new route! the : is a wildcard because we don't know what the user will click on!
 app.get('/vote/:value/:id', (req, res, next) => {
     const value = req.params.value;
     const aid = req.params.id;
-    const insertQuery = `INSERT INTO votes (id, aid, value)
+    const insertQuery = `INSERT INTO votes (id, aid, value, uid)
         VALUES
-        (DEFAULT, ?, ?);`;
-    connection.query(insertQuery, [aid, value], (error, results)=> {
+        (DEFAULT, ?, ?, ?);`;
+    connection.query(insertQuery, [aid, value, req.session.uid], (error, results)=> {
         if(error) {throw error;}
         res.redirect('/')
     })
 })
-
-// SELECT Orders.OrderID, Customers.CustomerName
-// FROM Orders
-// INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID;
 
 app.get('/standings', (req, res, next) => {
     const selectQuery = 
@@ -119,7 +170,16 @@ app.post('/registerProcess', (req, res, next) => {
 })
 
 app.get('/login', (req, res, next) => {
-    res.render('login', {});
+    let msg;
+    if (req.query.msg == 'noUser'){
+        msg = "This email is not registered."
+    } else if (req.query.msg == 'badPass'){
+        msg = "This password is invalid."
+    }
+    
+    res.render('login', {
+        msg
+    });
 });
 
 app.post('/loginProcess', (req, res, next) => {
@@ -143,13 +203,28 @@ app.post('/loginProcess', (req, res, next) => {
                 //goodbye
                 res.redirect('/login?msg=badPass')
             }else{
-                // 3. the user and the password are in te database, match!
+                // 3. the user and the password are in the database, match!
+                // note: every single http request (route) is a completely new request,
+                // the server forgets who we are. Cookies and sessions can help with here.
+                // --Cookies: Stores data in the broswer with a key in the server
+                // EVERY SINGLE PAGE REQUEST the entire cookie is sent to the server
+                // --Sessions: Data is stored on the server with a key(cookie) on the browser
+                req.session.name = results[0].name;
+                req.session.email = results[0].email;
+                req.session.uid = results[0].id;
+                req.session.loggedIn = true;
                 res.redirect('/?msg=loginSuccess')
             }
             
         }
         
     })
+})
+
+app.get('/logout', (req, res, next) => {
+    // delete all session variables for this user
+    req.session.destroy();
+    res.redirect('/login?msg=loggedOut')
 })
 
 console.log("App is listening on port 8282")
