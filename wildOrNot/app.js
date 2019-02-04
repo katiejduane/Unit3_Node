@@ -1,3 +1,6 @@
+// We need to read image files uploaded
+const fs = require('fs')
+
 // This is an express app... maybe we should GET express!
 const express = require('express');
 // The code below actually MAKES an express app
@@ -14,6 +17,9 @@ const helmet = require('helmet');
 // app.use means use some middleware
 // middleware = any function that has access to req and res
 app.use(helmet());
+
+const multer = require('multer');
+const upload = multer({dest: 'public/'});
 
 // get config file
 const config = require('./config');
@@ -225,6 +231,51 @@ app.get('/logout', (req, res, next) => {
     // delete all session variables for this user
     req.session.destroy();
     res.redirect('/login?msg=loggedOut')
+})
+
+app.get('/uploadAnimal', (req, res, next) => {
+    res.render('upload', {});
+})
+
+// app.post('/formSubmit', (req, res, next) => {
+//     upload
+//     next();
+// })
+// the above code does the same thing as the line below, but requires setting one route
+// with two separate blocks of code which can be cofusing
+
+app.post('/formSubmit', upload.single('imageToUpload'), (req, res, next) => {
+    // get the animal name from the form (req.body)
+    // get the image from the form... ?
+    // res.json(req.file);
+    // the file is here in req.file, but it is in BINARY
+    // --1. get the temp path / location of file
+    const tempPath = req.file.path
+    // --2. set up the new target path / where we want it (i.e. original name might be useful here)
+    const targetPath = `public/${req.file.originalname}`
+    // --3. we can't read binary, but fs can, so have fs read it!
+    // --4. once binary is read, write it to target
+    fs.readFile(tempPath, (error, fileContents) => {
+        if(error){throw error};
+        fs.writeFile(targetPath, fileContents, (error2) => {
+            if(error2){throw error2};
+             // --5. insert the same of the file into the db
+             const insertQuery = `INSERT INTO animals (id, species, image)
+                VALUES
+             (DEFAULT, ?, ?)`;
+             connection.query(insertQuery, [req.body.animalName, req.file.originalname], (dbError, dbResults) => {
+                if(dbError){
+                    throw dbError
+                }else{
+                    fs.unlink(tempPath)
+                    res.redirect('/')
+                }
+             })
+        })
+    })
+
+    // --6. send the file to /
+
 })
 
 console.log("App is listening on port 8282")
